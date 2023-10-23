@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+
+// 유효성 검사
 import { EMAIL_REGEX, PWD_REGEX } from "../js/validation";
 
 // js
@@ -25,6 +28,9 @@ const Register = () => {
     setError,
     watch,
   } = useForm();
+
+  // 네비게이션
+  const navigate = useNavigate();
 
   // 제어 컴포넌트로 이메일, 닉네임 값 실시간 확인
   const watchEmail = watch("email");
@@ -130,7 +136,6 @@ const Register = () => {
       }
       // 모두 통과하면 회원가입 api 호출
       console.log("API 호출");
-      alert("이메일 갔으니까 확인하세요");
       postRegister(
         email,
         nickname,
@@ -139,6 +144,8 @@ const Register = () => {
         profile[0],
         intro
       );
+      alert("이메일 갔으니까 확인하세요");
+      navigate("/login");
     } else {
       // 이메일 / 닉네임 중복 검사를 하지 않으면 아래 코드 실행
       if (!isPassedEmail) {

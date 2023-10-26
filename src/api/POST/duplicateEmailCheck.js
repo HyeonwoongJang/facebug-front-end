@@ -23,6 +23,7 @@ const isDuplicateEmail = async (email) => {
       return isPassed;
     }
   } catch (err) {
+    console.log(err);
     if (err.response.status === 409) {
       console.log("이메일 중복 가입 차단");
       return isPassed;

@@ -1,0 +1,65 @@
+.img-box {
+  width: 500px;
+  height: 300px;
+  border: 1px solid rgb(224, 224, 224);
+  padding: 1rem;
+  position: relative;
+}
+
+.img-box > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.loading-box {
+  position: absolute;
+  top: 40px;
+  left: 175px;
+}
+
+.input-box,.input-box_sec {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(207, 207, 207);
+  height: 50px;
+  margin: 20px 0;
+  border-radius: 10px;
+  width: 500px;
+  padding: 0 1rem;
+}
+
+.convert-btn {
+  height: 35px;
+  width: 100px;
+  text-align: center;
+  color: #333;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgb(207, 207, 207);
+}
+
+.input-box_sec {
+  height: 80px;
+}
+
+.input-box_title{
+  width: 375px;
+  background: rgb(233, 233, 233);
+  border-radius: 10px;
+  height: 40px;
+  font-size: 20px;
+  padding-left: 10px;
+  margin-right: 5px;
+}
+
+.input-box_sec > button {
+  width: 120px;
+  text-align: center;
+  color: #333;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgb(207, 207, 207);
+  height: 40px;
+}

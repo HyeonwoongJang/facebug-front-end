@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { Link } from "react-router-dom";
 // 유효성 검사
 import { EMAIL_REGEX, PWD_REGEX } from "../js/validation";
 
@@ -13,6 +14,8 @@ import { postRegister } from "../api/POST/register";
 
 const Register = () => {
   const [profilePreview, setProfilePreview] = useState("");
+
+  const upLoadImg = useRef();
 
   // 중복 검사 통과 확인을 위한 훅
   const [isPassedEmail, setIsPassedEmail] = useState(false);
@@ -44,7 +47,10 @@ const Register = () => {
       const file = watchProfile[0];
       setProfilePreview(URL.createObjectURL(file));
     }
-  }, [watchProfile]);
+  }, [watchProfile, upLoadImg]);
+
+  console.log("watchProfile:", watchProfile);
+  console.log("profilePreview:", profilePreview);
 
   // useEffect로 실시간으로 이메일을 확인해서 유효성 검사를 실시한 뒤
   // 그에 맞는 불리언 값을 상태 값으로 저장
@@ -73,12 +79,6 @@ const Register = () => {
       );
       return;
     } else {
-      console.log("이메일 중복 검사 통과");
-      setError(
-        "email",
-        { message: "사용할 수 있는 이메일 입니다." },
-        { shouldFocus: true }
-      );
       setIsPassedEmail(true);
     }
   };
@@ -104,12 +104,6 @@ const Register = () => {
       );
       return;
     } else {
-      console.log("닉네임 중복 검사 통과");
-      setError(
-        "nickname",
-        { message: "사용할 수 있는 닉네임 입니다." },
-        { shouldFocus: true }
-      );
       setIsPassedNickname(true);
     }
   };
@@ -144,7 +138,8 @@ const Register = () => {
         profile[0],
         intro
       );
-      alert("이메일 갔으니까 확인하세요");
+      alert(`${email}에 인증 메일을 보냈습니다.
+수신함을 확인하세요.`);
       navigate("/login");
     } else {
       // 이메일 / 닉네임 중복 검사를 하지 않으면 아래 코드 실행
@@ -167,80 +162,136 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitRegisterHandler)}>
-      <img src={profilePreview} alt="user-profile-img" />
-      <input {...register("profile")} type="file" accept="image" />
-      <label htmlFor="email">Email</label>
-      <input
-        id="email"
-        {...register("email", {
-          required: "이메일을 필수로 입력해주세요.",
-          pattern: {
-            value: EMAIL_REGEX,
-            message: "이메일 형식을 맞춰서 작성하세요.",
-            shouldFocus: true,
-          },
-        })}
-      />
-      <button
-        onClick={(e) => {
-          checkConflictEmail();
-          e.preventDefault();
-        }}
-      >
-        이메일 중복 검사
-      </button>
-      {<div>{errors?.email?.message}</div>}
-      <label>Name</label>
-      <input
-        type="text"
-        {...register("nickname", {
-          required: "이름을 필수로 입력해주세요.",
-          maxLength: {
-            value: 12,
-            message: "이름은 12 글자 이내로 작성하세요.",
-            shouldFocus: true,
-          },
-        })}
-      />
-      <button
-        onClick={(e) => {
-          checkConflictNickname();
-          e.preventDefault();
-        }}
-      >
-        닉네임 중복 검사
-      </button>
-      {<div>{errors?.nickname?.message}</div>}
-      <label>Password</label>
-      <input
-        type="password"
-        {...register("password", {
-          required: "비밀번호를 필수로 입력해주세요.",
-          pattern: {
-            value: PWD_REGEX,
-            message: "패스워드는 문자, 숫자 조합 8글자 이상을 사용하세요.",
-            shouldFocus: true,
-          },
-        })}
-      />
-      {<div>{errors?.password?.message}</div>}
-      <label>Password Confirm</label>
-      <input
-        type="password"
-        {...register("passwordConfirm", {
-          required: "비밀번호를 체크를 확인하세요.",
-          pattern: {
-            value: PWD_REGEX,
-            message: "패스워드는 문자, 숫자 조합 8글자 이상을 사용하세요.",
-            shouldFocus: true,
-          },
-        })}
-      />
-      {<div>{errors?.passwordConfirm?.message}</div>}
-      <textarea type="text" {...register("intro")} />
-      <input type="submit" />
-    </form>
+    <section className="login-wrap">
+      <div className="login-container">
+        <h1>회원가입</h1>
+        <p>
+          이미 계정이 있으신가요?{" "}
+          <Link className="goRegister" to="/login">
+            로그인
+          </Link>
+        </p>
+        <form onSubmit={handleSubmit(onSubmitRegisterHandler)}>
+          <div className="sel-img-wrap">
+            <div>
+              <img
+                src={
+                  profilePreview
+                    ? profilePreview
+                    : "https://velog.velcdn.com/images/duboo/post/208c6eff-89bd-4387-91bf-3dcf059bc62e/image.png"
+                }
+                alt="user-profile-img"
+              />
+            </div>
+            <input
+              {...register("profile")}
+              // ref={upLoadImg}
+              type="file"
+              accept="image"
+            />
+          </div>
+          <div className={`inputBox ${isPassedEmail ? "passed" : ""}`}>
+            <label htmlFor="email">Email</label>
+            <div className="inputBox_btn">
+              <input
+                id="email"
+                {...register("email", {
+                  required: "이메일을 필수로 입력해주세요.",
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: "이메일 형식을 맞춰서 작성하세요.",
+                    shouldFocus: true,
+                  },
+                })}
+              />
+              <button
+                onClick={(e) => {
+                  checkConflictEmail();
+                  e.preventDefault();
+                }}
+              >
+                중복 체크
+              </button>
+            </div>
+          </div>
+          {<div className="login-error">{errors?.email?.message}</div>}
+          <div>
+            <div className={`inputBox ${isPassedNickname ? "passed" : ""}`}>
+              <label htmlFor="nickname">Nickname</label>
+              <div className="inputBox_btn">
+                <input
+                  id="nickname"
+                  type="text"
+                  {...register("nickname", {
+                    required: "이름을 필수로 입력해주세요.",
+                    maxLength: {
+                      value: 12,
+                      message: "이름은 12 글자 이내로 작성하세요.",
+                      shouldFocus: true,
+                    },
+                  })}
+                />
+                <button
+                  onClick={(e) => {
+                    checkConflictNickname();
+                    e.preventDefault();
+                  }}
+                >
+                  중복 체크
+                </button>
+              </div>
+            </div>
+          </div>
+          {<div className="login-error">{errors?.nickname?.message}</div>}
+          <div className="inputBox">
+            <label htmlFor="password">Password</label>
+            <input
+              id="passowrd"
+              type="password"
+              {...register("password", {
+                required: "비밀번호를 필수로 입력해주세요.",
+                pattern: {
+                  value: PWD_REGEX,
+                  message:
+                    "패스워드는 문자, 숫자, 특수문자 조합 8글자 이상을 사용하세요.",
+                  shouldFocus: true,
+                },
+              })}
+            />
+          </div>
+          {<div className="login-error">{errors?.password?.message}</div>}
+          <div className="inputBox">
+            <label htmlFor="pwConfirm">Password Confirm</label>
+            <input
+              id="pwConfirm"
+              type="password"
+              {...register("passwordConfirm", {
+                required: "비밀번호를 체크를 확인하세요.",
+                pattern: {
+                  value: PWD_REGEX,
+                  message:
+                    "패스워드는 문자, 숫자 조합 8글자 이상을 사용하세요.",
+                  shouldFocus: true,
+                },
+              })}
+            />
+          </div>
+
+          {
+            <div className="login-error">
+              {errors?.passwordConfirm?.message}
+            </div>
+          }
+          <div className="inputBox">
+            <label htmlFor="intro">
+              Introduce<span>OPTION</span>
+            </label>
+            <textarea id="intro" type="text" {...register("intro")} />
+          </div>
+          <input className="submit-btn" type="submit" value="회원가입" />
+        </form>
+      </div>
+    </section>
   );
 };
 

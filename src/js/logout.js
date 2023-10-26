@@ -3,4 +3,9 @@ const logout = (navigate) => {
   navigate("/");
 };
 
-export { logout };
+const logoutEdit = (navigate) => {
+  localStorage.clear();
+  navigate("/login");
+};
+
+export { logout, logoutEdit };

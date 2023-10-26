@@ -1,79 +1,84 @@
 import React, { useEffect, useState } from "react";
-
-// api
-import { getAllArticles, moreArticles } from "../api/GET/articles";
-import { deleteArticle } from "../api/DELETE/deleteArticle";
 import { getUserInfoInLocalStorage } from "../js/getLocalStorageUser";
+import { userArticle } from "../api/GET/userArticle";
+import { useNavigate } from "react-router-dom";
+import { moreArticles, prevArticles } from "../api/GET/articles";
+import { deleteArticle } from "../api/DELETE/deleteArticle";
+import { getUserInfo } from "../api/GET/userInfo";
 
-// component
 import MoodList from "../components/MoodList";
 
 // css
-import "../styles/article.css";
+import "../styles/user.css";
 
-const Main = () => {
-  const [allArticle, setAllarticle] = useState([]);
+const ProfilePage = () => {
+  const { userId } = getUserInfoInLocalStorage();
   const [next, setNext] = useState("");
   const [prev, setPrev] = useState("");
+  const navigate = useNavigate();
 
-  const { userId } = getUserInfoInLocalStorage();
+  const [articles, setArticles] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
 
-  const nextGetArticles = async () => {
-    const response = await moreArticles(next);
-    if (response?.data?.results.length > 0) {
-      setAllarticle([...response.data.results]);
-      setNext(response?.data?.["Next-Page"]);
-      setPrev(response?.data?.["Previous-Page"]);
+  const getUserArticle = async (userId) => {
+    if (userId) {
+      const response = await userArticle(userId);
+      if (response?.data?.results.length > 0) {
+        setArticles([...response?.data?.results]);
+        setNext(response?.data?.["Next-Page"]);
+      }
+    } else {
+      navigate("/login");
     }
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth",
-    });
   };
 
-  const prevGetArtices = async () => {
-    const response = await moreArticles(prev);
-    console.log("responsasdasde: ", response.data.results);
-    if (response?.data?.results.length > 0) {
-      setAllarticle([...response.data.results]);
-      setNext(response?.data?.["Next-Page"]);
-      setPrev(response?.data?.["Previous-Page"]);
-    }
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth",
-    });
+  const getUserInfoData = async () => {
+    const response = await getUserInfo();
+    setUserInfo({ ...response.data });
   };
 
   useEffect(() => {
-    const getFetchArticleAndSetArticles = async () => {
-      const response = await getAllArticles(next);
+    getUserArticle(userId);
+    getUserInfoData();
+  }, []);
 
-      if (response?.data?.results.length > 0) {
-        setAllarticle([...response.data.results]);
-        setNext(response?.data?.["Next-Page"]);
-        setPrev(response?.data?.["Previous-Page"]);
-      }
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "smooth",
-      });
-    };
+  const nextGetArticles = async () => {
+    console.log("next: ", next);
+    const response = await moreArticles(next);
+    console.log("response: ", response.data.results);
+    if (response?.data?.results.length > 0) {
+      setArticles([...response.data.results]);
+      setNext(response?.data?.["Next-Page"]);
+      setPrev(response?.data?.["Previous-Page"]);
+    }
+  };
 
-    getFetchArticleAndSetArticles();
-  }, [next]);
+  const prevGetArtices = async () => {
+    console.log("prev: ", prev);
+    const response = await prevArticles(prev);
+    console.log("response: ", response.data.results);
+    if (response?.data?.results.length > 0) {
+      setArticles([...response.data.results]);
+      setNext(response?.data?.["Next-Page"]);
+      setPrev(response?.data?.["Previous-Page"]);
+    }
+  };
 
-  console.log("allArticle: ", allArticle);
+  const { email, intro, nickname } = userInfo;
 
   return (
     <>
-      {allArticle.length === 0 ? (
+      <div className="intro-box">
+        <div>
+          <div>{nickname}</div>
+          <div>{email}</div>
+        </div>
+        <div>{intro}</div>
+      </div>
+      {articles.length === 0 ? (
         <div>작성한 게시글이 없습니다!!</div>
       ) : (
-        allArticle.map((article) => {
+        articles.map((article) => {
           const { content_detail } = article;
           const keys = Object.keys(JSON.parse(content_detail));
           const values = Object.values(JSON.parse(content_detail));
@@ -100,7 +105,7 @@ const Main = () => {
                   className="remove-btn"
                   onClick={() => {
                     console.log("게시글 아이디: ", id);
-                    deleteArticle(id, allArticle, setAllarticle);
+                    deleteArticle(id, articles, setArticles);
                   }}
                 >
                   X
@@ -141,4 +146,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default ProfilePage;

@@ -14,6 +14,7 @@ const postRegister = async (
   userRegister.append("email", email);
   userRegister.append("nickname", nickname);
   userRegister.append("password", password);
+  userRegister.append("password_confirmation", passwordConfirm);
   userRegister.append("profile_img", profile);
   userRegister.append("intro", intro);
 

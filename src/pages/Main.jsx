@@ -25,48 +25,30 @@ const Main = () => {
       setNext(response?.data?.["Next-Page"]);
       setPrev(response?.data?.["Previous-Page"]);
     }
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth",
-    });
   };
 
   const prevGetArtices = async () => {
     const response = await moreArticles(prev);
-    console.log("responsasdasde: ", response.data.results);
     if (response?.data?.results.length > 0) {
       setAllarticle([...response.data.results]);
       setNext(response?.data?.["Next-Page"]);
       setPrev(response?.data?.["Previous-Page"]);
     }
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth",
-    });
   };
 
   useEffect(() => {
     const getFetchArticleAndSetArticles = async () => {
-      const response = await getAllArticles(next);
+      const response = await getAllArticles();
 
       if (response?.data?.results.length > 0) {
         setAllarticle([...response.data.results]);
         setNext(response?.data?.["Next-Page"]);
         setPrev(response?.data?.["Previous-Page"]);
       }
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "smooth",
-      });
     };
 
     getFetchArticleAndSetArticles();
-  }, [next]);
-
-  console.log("allArticle: ", allArticle);
+  }, []);
 
   return (
     <>
@@ -99,7 +81,6 @@ const Main = () => {
                 <button
                   className="remove-btn"
                   onClick={() => {
-                    console.log("게시글 아이디: ", id);
                     deleteArticle(id, allArticle, setAllarticle);
                   }}
                 >

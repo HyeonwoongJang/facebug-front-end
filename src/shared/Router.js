@@ -14,15 +14,39 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Navigation />}>
-          <Route index element={<Main />} />
-          <Route path="/profile-upload" element={<ProfileUpload />} />
-          <Route path="/profile-edit" element={<ProfileEdit />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+        <Route basename={process.env.PUBLIC_URL} element={<Navigation />}>
+          <Route basename={process.env.PUBLIC_URL} index element={<Main />} />
+          <Route
+            basename={process.env.PUBLIC_URL}
+            path="/profile-upload"
+            element={<ProfileUpload />}
+          />
+          <Route
+            basename={process.env.PUBLIC_URL}
+            path="/profile-edit"
+            element={<ProfileEdit />}
+          />
+          <Route
+            basename={process.env.PUBLIC_URL}
+            path="/profile/:id"
+            element={<ProfilePage />}
+          />
+          <Route
+            basename={process.env.PUBLIC_URL}
+            path="/register"
+            element={<Register />}
+          />
+          <Route
+            basename={process.env.PUBLIC_URL}
+            path="/login"
+            element={<Login />}
+          />
         </Route>
-        <Route path="*" element={<NotFound />} />
+        <Route
+          basename={process.env.PUBLIC_URL}
+          path="*"
+          element={<NotFound />}
+        />
       </Routes>
     </BrowserRouter>
   );
